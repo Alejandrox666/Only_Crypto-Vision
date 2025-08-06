@@ -20,6 +20,7 @@ app.use((err, req, res, next) => {
 
 // Importa rutas
 const authRoutes = require('./routes/auth');
+const registerRoutes = require('./routes/registerRoutes');
 
 // Usa rutas con logging
 app.use('/api/auth', (req, res, next) => {
@@ -27,6 +28,13 @@ app.use('/api/auth', (req, res, next) => {
   console.log('[BODY]', req.body); // Log del cuerpo de la petición
   next();
 }, authRoutes);
+
+
+app.use('/api/auth', (req, res, next) => {
+  console.log(`[PETICIÓN REGISTER] ${req.method} ${req.path}`);
+  console.log('[BODY]', req.body);
+  next();
+}, registerRoutes);
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
