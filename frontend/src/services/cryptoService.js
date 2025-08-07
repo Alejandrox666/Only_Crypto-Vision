@@ -33,5 +33,15 @@ export const portfolioService = {
         error.response?.data?.error || "Error al vender"
       );
     }
+  },
+async addFunds(userId, amount) {
+  try {
+    const response = await api.post('crypto/addFunds', { userId, amount });
+    return response.data;
+  } catch (error) {
+    throw new Error(
+      error.response?.data?.error || "Error al agregar fondos"
+    );
   }
+}
 };

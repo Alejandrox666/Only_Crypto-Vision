@@ -23,6 +23,40 @@ router.get('/portfolio/:userId', async (req, res) => {
     });
   }
 });
+
+// Agregar fondos a la cuenta
+router.post('/addFunds', async (req, res) => {
+  const { userId, amount } = req.body;
+  
+  if (!userId || !amount || isNaN(amount) || amount <= 0) {
+    return res.status(400).json({ error: "Datos inválidos" });
+  }
+
+  const conn = await db.getConnection();
+  try {
+    await conn.beginTransaction();
+
+    // Verificar si el usuario ya tiene un registro de saldo
+    const [saldoRows] = await conn.query("SELECT * FROM saldos WHERE user_id = ? FOR UPDATE", [userId]);
+
+    if (saldoRows.length === 0) {
+      // Si no existe, crear un nuevo registro
+      await conn.query("INSERT INTO saldos (user_id, balance) VALUES (?, ?)", [userId, amount]);
+    } else {
+      // Si existe, actualizar el saldo
+      await conn.query("UPDATE saldos SET balance = balance + ? WHERE user_id = ?", [amount, userId]);
+    }
+
+    await conn.commit();
+    res.json({ message: "Fondos agregados exitosamente", newBalance: saldoRows.length ? Number(saldoRows[0].balance) + Number(amount) : amount });
+  } catch (error) {
+    await conn.rollback();
+    console.error("Error al agregar fondos:", error);
+    res.status(500).json({ error: "Error al procesar la transacción" });
+  } finally {
+    conn.release();
+  }
+});
 // Comprar criptomoneda
 router.post('/buy', async (req, res) => {
   console.log('Iniciando compra - Body recibido:', req.body); // Log del request

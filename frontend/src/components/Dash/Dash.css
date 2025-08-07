@@ -125,3 +125,144 @@ body {
   border-color: #ff4d4d;
   box-shadow: 0 0 15px rgba(255, 77, 77, 0.3);
 }
+/* Nuevos estilos para cantidad */
+.quantity-control {
+  margin-bottom: 10px;
+}
+
+.quantity-control input {
+  width: 35%;
+  padding: 8px;
+  border-radius: 5px;
+  border: 1px solid #444;
+  background: #222;
+  color: white;
+  text-align: center;
+}
+
+.quantity-control input:focus {
+  outline: none;
+  border-color: #00ff88;
+}
+/* Estilos base existentes... */
+
+/* Modal de depósito */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  background-color: black;
+  padding: 25px;
+  border-radius: 10px;
+  width: 400px;
+  max-width: 90%;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+  position: relative;
+  border-color: #00ff88;
+  box-shadow: 0 0 15px rgba(0, 255, 136, 0.3); 
+}
+
+
+.close-modal {
+  position: absolute;
+  top: 10px;
+  right: 15px;
+  font-size: 1.5rem;
+  cursor: pointer;
+  color: #888;
+}
+
+.close-modal:hover {
+  color: #333;
+}
+
+.form-group {
+  margin-bottom: 20px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 600;
+  color: #333;
+}
+
+.form-group input {
+  width: 94%;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  font-size: 1rem;
+}
+
+.form-row {
+  display: flex;
+  gap: 15px;
+}
+
+.form-row .form-group {
+  flex: 1;
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 25px;
+}
+
+.disclaimer {
+  margin-top: 20px;
+  color: #666;
+  font-size: 0.8em;
+  text-align: center;
+  font-style: italic;
+}
+
+/* Estilos para los botones del modal */
+.modal-actions button {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: background-color 0.2s;
+}
+
+.modal-actions button:first-child {
+  background-color: #f1f1f1;
+  color: #333;
+}
+
+.modal-actions button:first-child:hover {
+  background-color: #e1e1e1;
+}
+
+.modal-actions button:last-child {
+  background-color: #4CAF50;
+  color: white;
+}
+
+.modal-actions button:last-child:hover {
+  background-color: #3e8e41;
+}
+
+
+
+.deposit-button:hover {
+  background-color: #3e8e41 !important;
+}
+
+.logout-button:hover {
+  background-color: #cc0000 !important;
+}
