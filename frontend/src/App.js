@@ -5,6 +5,7 @@ import Register from './components/Auth/Register.jsx';
 import Dashboard from './components/Dashboard.jsx'; // Necesitarás crear este archivo
 import { authService } from './services/authService';
 import './App.css';
+import Dash from './components/Dash/Dash.jsx';
 
 const PrivateRoute = ({ children }) => {
   return authService.isAuthenticated() ? children : <Navigate to="/login" />;
@@ -16,6 +17,7 @@ function App() {
       <Routes>
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
+        <Route path="/dash" element={<Dash />} />
         <Route 
           path="/dashboard" 
           element={
@@ -24,7 +26,8 @@ function App() {
             </PrivateRoute>
           } 
         />
-        <Route path="/" element={<Navigate to="/dashboard" />} />
+       
+        <Route path="/" element={<Navigate to="/dash" />} />
       </Routes>
     </Router>
   );

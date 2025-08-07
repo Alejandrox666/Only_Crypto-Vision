@@ -23,7 +23,7 @@ const Login = () => {
     
     try {
       await authService.login(formData.email, formData.password);
-      navigate('/dashboard');
+      navigate('/dash');
     } catch (err) {
       setError(err.message);
     } finally {
