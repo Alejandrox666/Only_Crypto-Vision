@@ -4,6 +4,7 @@ import Login from './components/Auth/Login.jsx';
 import Register from './components/Auth/Register.jsx';
 import Dashboard from './components/Dashboard.jsx'; // Necesitarás crear este archivo
 import { authService } from './services/authService';
+import Formulario from './components/formulario/formulario.jsx'
 import './App.css';
 import Dash from './components/Dash/Dash.jsx';
 
@@ -18,6 +19,7 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/dash" element={<Dash />} />
+        <Route path="/form" element={<Formulario />} />
         <Route 
           path="/dashboard" 
           element={

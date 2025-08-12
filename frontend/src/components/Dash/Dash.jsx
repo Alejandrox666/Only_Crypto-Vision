@@ -4,8 +4,10 @@ import "chart.js/auto";
 import "./Dash.css";
 import { portfolioService } from '../../services/cryptoService';
 import { authService } from '../../services/authService';
+import { useNavigate } from "react-router-dom";
 
 const userId = 1;
+
 
 const cryptoList = [
   { id: "bitcoin", name: "Bitcoin", symbol: "BTC", basePrice: 29500 },
@@ -24,6 +26,7 @@ const generateInitialHistory = (basePrice, length = 20) => {
 };
 
 const Dash = () => {
+  const navigate = useNavigate();
   const [cryptos, setCryptos] = useState(
     cryptoList.map((crypto) => {
       const history = generateInitialHistory(crypto.basePrice);
@@ -251,6 +254,22 @@ const Dash = () => {
       <div className="balance">
         💰 Saldo: ${Number(balance || 0).toFixed(2)} | 
         📈 Valor Portafolio: ${portfolioValue.toFixed(2)}
+         <button 
+    onClick={() => navigate('/form')}
+    className="learn-button"
+    style={{
+      float: 'right',
+      background: '#2196F3',
+      color: 'white',
+      border: 'none',
+      padding: '5px 10px',
+      borderRadius: '4px',
+      cursor: 'pointer',
+      marginLeft: '10px'
+    }}
+  >
+    Aprende de Cryptomonedas
+  </button>
         <button 
           onClick={() => setShowDepositModal(true)}
           className="deposit-button"

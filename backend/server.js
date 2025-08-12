@@ -7,10 +7,7 @@ const app = express();
 // Configuración mejorada de logs
 app.use(morgan('dev')); // Logs detallados de cada petición
 app.use(express.json());
-app.use(cors({
-  origin: 'http://localhost:3000',
-  credentials: true
-}));
+app.use(cors());
 
 
 
@@ -47,7 +44,7 @@ app.use('/api/crypto', (req, res, next) => {
 }, cryptos);
 
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => {
+app.listen(PORT, '0.0.0.0',() => {
   console.log(`[INICIO] Servidor en http://localhost:${PORT} a las ${new Date().toLocaleTimeString()}`);
   console.log('[CONFIG] DB_HOST:', process.env.DB_HOST);
   console.log('[CONFIG] JWT_SECRET:', process.env.JWT_SECRET ? '*** configurado ***' : 'NO configurado');

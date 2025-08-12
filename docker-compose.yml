@@ -1,0 +1,35 @@
+version: '3.8'
+services:
+  backend:
+    build: ./backend
+    ports:
+      - "5000:5000"
+    environment:
+      - DB_HOST=mysql
+      - DB_USER=root
+      - DB_PASSWORD=1492
+      - DB_NAME=crypto
+    depends_on:
+      - mysql
+    restart: unless-stopped 
+
+  frontend:
+    build: ./frontend
+    ports:
+      - "3000:80"
+    depends_on:
+      - backend
+
+  mysql:
+    image: mysql:8.0
+    environment:
+      MYSQL_ROOT_PASSWORD: 1492
+      MYSQL_DATABASE: crypto
+    volumes:
+      - mysql_data:/var/lib/mysql
+    ports:
+      - "3307:3306"  # Para conectarte desde el host, si lo necesitas
+    restart: unless-stopped
+
+volumes:
+  mysql_data:
