@@ -2,29 +2,32 @@ name: Run Tests
 
 on:
   push:
-    branches: [ "master" ]  # Se activa al hacer push a "main"
+    branches: [ "master" ]
   pull_request:
-    branches: [ "master" ]  # También en PRs hacia "main"
+    branches: [ "master" ]
 
 jobs:
   test:
-    runs-on: ubuntu-latest  # Sistema operativo
+    runs-on: ubuntu-latest
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4  # Descarga el código
+        uses: actions/checkout@v4
 
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'  # Versión de Node.js (ajusta según tu proyecto)
+          node-version: '20'
 
       - name: Install dependencies
-        run: npm ci  # Instala dependencias (más rápido y preciso que `npm install`)
+        run: npm ci
+        working-directory: ./frontend  # Cambia al directorio donde está tu package.json
 
       - name: Run Tests
         run: |
-          npm test Dash.test.js
-          npm test formulario.test.js
-          npm test Register.test.js
-          npm test Login.test.js
+          npm test src/components/Auth/Login.test.js
+          npm test src/components/Auth/Register.test.js
+          npm test src/components/Dash/Dash.test.js
+          npm test src/components/formulario/formulario.test.js
+          # Añade más pruebas según sea necesario
+        working-directory: ./frontend  # Ejecuta los comandos desde /frontend
