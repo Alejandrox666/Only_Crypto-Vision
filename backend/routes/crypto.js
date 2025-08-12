@@ -57,6 +57,55 @@ router.post('/addFunds', async (req, res) => {
     conn.release();
   }
 });
+
+// retirar fondos a la cuenta
+router.post('/lessFunds', async (req, res) => {
+  console.log("[DEBUG] Petición recibida en /lessFunds", {
+    body: req.body,
+    headers: req.headers,
+    method: req.method,
+    url: req.originalUrl
+  });
+
+  const { userId, amount } = req.body;
+  console.log("[DEBUG] Datos recibidos:", { userId, amount });
+
+  if (!userId || !amount || isNaN(amount) || amount <= 0) {
+    console.log("[DEBUG] Datos inválidos:", { userId, amount });
+    return res.status(400).json({ error: "Datos inválidos" });
+  }
+
+  const conn = await db.getConnection();
+  try {
+    await conn.beginTransaction();
+    console.log("[DEBUG] Transacción iniciada");
+
+    const [saldoRows] = await conn.query("SELECT * FROM saldos WHERE user_id = ? FOR UPDATE", [userId]);
+    console.log("[DEBUG] Saldo actual:", saldoRows);
+
+    if (saldoRows.length === 0) {
+      console.log("[DEBUG] Creando nuevo registro de saldo");
+      await conn.query("INSERT INTO saldos (user_id, balance) VALUES (?, ?)", [userId, -amount]);
+    } else {
+      console.log("[DEBUG] Actualizando saldo existente");
+      await conn.query("UPDATE saldos SET balance = balance - ? WHERE user_id = ?", [amount, userId]);
+    }
+
+    await conn.commit();
+    console.log("[DEBUG] Transacción completada");
+    res.json({ 
+      message: "Fondos retirados exitosamente", 
+      newBalance: saldoRows.length ? Number(saldoRows[0].balance) - Number(amount) : -amount 
+    });
+  } catch (error) {
+    await conn.rollback();
+    console.error("[DEBUG] Error en la transacción:", error);
+    res.status(500).json({ error: "Error al procesar la transacción" });
+  } finally {
+    conn.release();
+  }
+});
+
 // Comprar criptomoneda
 router.post('/buy', async (req, res) => {
   console.log('Iniciando compra - Body recibido:', req.body); // Log del request

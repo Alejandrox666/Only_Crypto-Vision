@@ -40,26 +40,49 @@ const Login = () => {
         {error && <div className="error-message">{error}</div>}
         
         <form onSubmit={handleSubmit}>
-          <div className="input-group">
-            <label>Email</label>
-            <input
-              type="email"
-              name="email"
-              value={formData.email}
-              onChange={handleChange}
-              required
-            />
-          </div>
-          <div className="input-group">
-            <label>Contraseña</label>
-            <input
-              type="password"
-              name="password"
-              value={formData.password}
-              onChange={handleChange}
-              required
-            />
-          </div>
+       <div className="input-group">
+  <label htmlFor="email">Email</label>
+  <input
+    id="email"
+    type="email"
+    name="email"
+    value={formData.email}
+    onChange={handleChange}
+    required
+  />
+</div>
+   <div className="input-group">
+  <label htmlFor="password">Contraseña</label>
+  <input
+    id="password"
+    type="password"
+    name="password"
+    value={formData.password}
+    onChange={handleChange}
+    required
+    pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$"
+    title="La contraseña debe tener al menos 8 caracteres, una mayúscula, una minúscula, un número y un carácter especial"
+  />
+  {formData.password && (
+    <div className="password-validations">
+      <p className={formData.password.length >= 8 ? "valid" : "invalid"}>
+        ✓ Mínimo 8 caracteres
+      </p>
+      <p className={/[A-Z]/.test(formData.password) ? "valid" : "invalid"}>
+        ✓ Al menos una letra mayúscula
+      </p>
+      <p className={/[a-z]/.test(formData.password) ? "valid" : "invalid"}>
+        ✓ Al menos una letra minúscula
+      </p>
+      <p className={/\d/.test(formData.password) ? "valid" : "invalid"}>
+        ✓ Al menos un número
+      </p>
+      <p className={/[@$!%*?&]/.test(formData.password) ? "valid" : "invalid"}>
+        ✓ Al menos un carácter especial (@$!%*?&)
+      </p>
+    </div>
+  )}
+</div>
           <button 
             type="submit" 
             className="login-button"

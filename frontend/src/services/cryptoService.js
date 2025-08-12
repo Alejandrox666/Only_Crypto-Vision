@@ -43,5 +43,15 @@ async addFunds(userId, amount) {
       error.response?.data?.error || "Error al agregar fondos"
     );
   }
+},
+async lessFunds(userId, amount) {
+  try {
+    const response = await api.post('crypto/lessFunds', { userId, amount });
+    return response.data;
+  } catch (error) {
+    throw new Error(
+      error.response?.data?.error || "Error al retirar fondos"
+    );
+  }
 }
 };

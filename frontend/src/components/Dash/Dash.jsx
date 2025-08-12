@@ -8,7 +8,6 @@ import { useNavigate } from "react-router-dom";
 
 const userId = 1;
 
-
 const cryptoList = [
   { id: "bitcoin", name: "Bitcoin", symbol: "BTC", basePrice: 29500 },
   { id: "ethereum", name: "Ethereum", symbol: "ETH", basePrice: 3250 },
@@ -45,6 +44,7 @@ const Dash = () => {
   const [portfolio, setPortfolio] = useState({});
   const [quantities, setQuantities] = useState({});
   const [showDepositModal, setShowDepositModal] = useState(false);
+  const [showRetirModal, setShowRetirModal] = useState(false);
   const [depositAmount, setDepositAmount] = useState('');
   const [cardDetails, setCardDetails] = useState({
     number: '',
@@ -210,7 +210,6 @@ const Dash = () => {
     }
 
     try {
-      // Simulamos un retraso de red
       await new Promise(resolve => setTimeout(resolve, 1000));
       await portfolioService.addFunds(userId, parseFloat(depositAmount));
       await refreshData();
@@ -223,10 +222,58 @@ const Dash = () => {
     }
   };
 
+  const handleWithdraw = async () => {
+    if (!depositAmount || isNaN(depositAmount)) {
+      showModal('Error', 'Por favor ingresa una cantidad válida');
+      return;
+    }
+
+    if (parseFloat(depositAmount) <= 0) {
+      showModal('Error', 'La cantidad debe ser mayor a cero');
+      return;
+    }
+
+    if (parseFloat(depositAmount) > balance) {
+      showModal('Error', 'No tienes suficiente saldo para retirar esta cantidad');
+      return;
+    }
+
+    if (!cardDetails.number || !cardDetails.expiry || !cardDetails.cvv) {
+      showModal('Error', 'Por favor completa todos los datos de la tarjeta');
+      return;
+    }
+
+    if (cardDetails.number.length !== 16 || !/^\d+$/.test(cardDetails.number)) {
+      showModal('Error', 'El número de tarjeta debe tener 16 dígitos');
+      return;
+    }
+
+    if (!/^\d{2}\/\d{2}$/.test(cardDetails.expiry)) {
+      showModal('Error', 'La fecha de expiración debe tener el formato MM/AA');
+      return;
+    }
+
+    if (cardDetails.cvv.length !== 3 || !/^\d+$/.test(cardDetails.cvv)) {
+      showModal('Error', 'El CVV debe tener 3 dígitos');
+      return;
+    }
+
+    try {
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      await portfolioService.lessFunds(userId, parseFloat(depositAmount));
+      await refreshData();
+      showModal('Éxito', `$${depositAmount} retirados de tu saldo`, false);
+      setShowRetirModal(false);
+      setDepositAmount('');
+      setCardDetails({ number: '', expiry: '', cvv: '' });
+    } catch (error) {
+      showModal('Error', error.message || 'No se pudo completar el retiro');
+    }
+  };
+
   const handleCardChange = (e) => {
     const { name, value } = e.target;
     
-    // Formateo especial para la fecha de expiración
     if (name === 'expiry' && value.length === 2 && !value.includes('/')) {
       setCardDetails(prev => ({
         ...prev,
@@ -254,22 +301,22 @@ const Dash = () => {
       <div className="balance">
         💰 Saldo: ${Number(balance || 0).toFixed(2)} | 
         📈 Valor Portafolio: ${portfolioValue.toFixed(2)}
-         <button 
-    onClick={() => navigate('/form')}
-    className="learn-button"
-    style={{
-      float: 'right',
-      background: '#2196F3',
-      color: 'white',
-      border: 'none',
-      padding: '5px 10px',
-      borderRadius: '4px',
-      cursor: 'pointer',
-      marginLeft: '10px'
-    }}
-  >
-    Aprende de Cryptomonedas
-  </button>
+        <button 
+          onClick={() => navigate('/form')}
+          className="learn-button"
+          style={{
+            float: 'right',
+            background: '#2196F3',
+            color: 'white',
+            border: 'none',
+            padding: '5px 10px',
+            borderRadius: '4px',
+            cursor: 'pointer',
+            marginLeft: '10px'
+          }}
+        >
+          Aprende de Cryptomonedas
+        </button>
         <button 
           onClick={() => setShowDepositModal(true)}
           className="deposit-button"
@@ -287,6 +334,22 @@ const Dash = () => {
           Ingresar Dinero
         </button>
         <button 
+          onClick={() => setShowRetirModal(true)}
+          className="withdraw-button"
+          style={{
+            float: 'right',
+            background: '#f39c12',
+            color: 'white',
+            border: 'none',
+            padding: '5px 10px',
+            borderRadius: '4px',
+            cursor: 'pointer',
+            marginLeft: '10px'
+          }}
+        >
+          Retirar Dinero
+        </button>
+        <button 
           onClick={handleLogout}
           className="logout-button"
           style={{
@@ -302,6 +365,108 @@ const Dash = () => {
           Cerrar sesión
         </button>
       </div>
+
+      {showRetirModal && (
+        <div className="modal-overlay">
+          <div className="modal-content">
+            <span 
+              className="close-modal" 
+              onClick={() => setShowRetirModal(false)}
+              style={{
+                float: 'right',
+                cursor: 'pointer',
+                fontSize: '1.5rem',
+                fontWeight: 'bold'
+              }}
+            >
+              &times;
+            </span>
+            <h3>Retirar Dinero</h3>
+            <div className="form-group">
+              <label>Cantidad a retirar (USD)</label>
+              <input
+                type="number"
+                min="1"
+                step="0.01"
+                value={depositAmount}
+                onChange={(e) => setDepositAmount(e.target.value)}
+                placeholder="Ej: 100.00"
+              />
+            </div>
+            
+            <div className="form-group">
+              <label>Tarjeta de Crédito/Débito</label>
+              <input
+                type="text"
+                name="number"
+                value={cardDetails.number}
+                onChange={handleCardChange}
+                placeholder="Número de tarjeta (16 dígitos)"
+                maxLength="16"
+              />
+            </div>
+            
+            <div className="form-row">
+              <div className="form-group">
+                <label>Fecha Expiración</label>
+                <input
+                  type="text"
+                  name="expiry"
+                  value={cardDetails.expiry}
+                  onChange={handleCardChange}
+                  placeholder="MM/AA"
+                  maxLength="5"
+                />
+              </div>
+              <div className="form-group">
+                <label>CVV</label>
+                <input
+                  type="text"
+                  name="cvv"
+                  value={cardDetails.cvv}
+                  onChange={handleCardChange}
+                  placeholder="CVV (3 dígitos)"
+                  maxLength="3"
+                />
+              </div>
+            </div>
+            
+            <div className="modal-actions">
+              <button 
+                onClick={() => setShowRetirModal(false)}
+                style={{
+                  background: '#f1f1f1',
+                  color: '#333',
+                  padding: '8px 16px',
+                  border: 'none',
+                  borderRadius: '4px',
+                  cursor: 'pointer'
+                }}
+              >
+                Cancelar
+              </button>
+              <button 
+                onClick={handleWithdraw} 
+                style={{
+                  background: '#f39c12',
+                  color: 'white',
+                  padding: '8px 16px',
+                  border: 'none',
+                  borderRadius: '4px',
+                  cursor: 'pointer',
+                  marginLeft: '10px'
+                }}
+              >
+                Confirmar Retiro
+              </button>
+            </div>
+            
+            <div className="disclaimer">
+              <small>Esta es una simulación. No se realizarán cargos reales a tu tarjeta.</small>
+            </div>
+          </div>
+        </div>
+      )}
 
       {showDepositModal && (
         <div className="modal-overlay">

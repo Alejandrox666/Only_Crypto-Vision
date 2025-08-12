@@ -88,3 +88,44 @@ body {
   font-size: 0.85rem;
   margin-bottom: 1rem;
 }
+.password-validations {
+  margin-top: 5px;
+  font-size: 0.8rem;
+}
+
+.password-validations p {
+  margin: 2px 0;
+  color: #ff0000;
+}
+
+.password-validations .valid {
+  color: #00aa00;
+}
+.input-error {
+  color: #ff0000;
+  font-size: 0.8rem;
+  margin-top: 5px;
+}
+
+.password-validations {
+  margin-top: 5px;
+  font-size: 0.8rem;
+}
+
+.password-validations p {
+  margin: 2px 0;
+  color: #ff0000;
+}
+
+.password-validations .valid {
+  color: #00aa00;
+}
+
+.error-message {
+  color: #ff0000;
+  background-color: #ffeeee;
+  padding: 10px;
+  border-radius: 4px;
+  margin-bottom: 15px;
+  font-size: 0.9rem;
+}
